@@ -10,20 +10,8 @@ var connection = mysql.createConnection({
   socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
 });
 
-
-// connection.connect(function (e) {
-//   // this will stop the execution of the code if an error is thrown
-//   if (e) throw e
-//   // console.log('Connected!')
-//   connection.query('SELECT * FROM products', function (error, response) {
-//     if (error) throw error
-//     console.log(response)
-//   })
-// })
-
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
-  runSearch();
 });
 
 function runSearch() {
@@ -38,85 +26,99 @@ function runSearch() {
       'Appliances'
     ]
   })
-    .then(function (answer) {
-      switch (answer.department_name) {
-        case 'Cleaning Products':
-          cleaningProductsSearch();
-          break;
-
-        case 'Vitamins':
-          vitaminsSearch();
-          break;
-
-        case 'Electronics':
-          electronicsSearch();
-          break;
-
-        case 'Appliances':
-          appliancesSearch();
-          break;
-      }
-    });
-
-  }
-function cleaningProductsSearch() {
-  var cleaningQuery = 'SELECT * FROM products WHERE department_name = "Cleaning Products"';
+  .then(function (answer) {
+    switch (answer.department_name) {
+      case 'Cleaning Products':
+      cleaningProductsSearch();
+      break;
+      
+      case 'Vitamins':
+      vitaminsSearch();
+      break;
+      
+      case 'Electronics':
+      electronicsSearch();
+      break;
+      
+      case 'Appliances':
+      appliancesSearch();
+      break;
+    }
+  });
   
-  inquirer.prompt({
-    name: 'department_name',
-    type: 'list',
-    message: 'What cleaning product would you like to buy?',
-    choices: [
-      connection.query(cleaningQuery,{ department_name: 'Cleaning Products'}, function(error, response){
-        for (var i = 1; i < response.length; i++) {
-          console.log(response[i].product_name)
-        }
+}
+function cleaningProductsSearch() {
+  var cleanArr = []
+  var cleaningQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(cleaningQuery, { department_name: 'Cleaning Products' }, function (error, response) {
+    for (var i = 0; i < response.length; i++) {
+      cleanArr.push(response[i].product_name)
+    }
+    
+    inquirer.prompt({
+        name: 'department_name',
+        type: 'list',
+        message: 'What cleaning product would you like to buy?',
+        choices: cleanArr
+        })
       })
-    ]
-  })
+
+    // inquirer.prompt({
+    //   name: 'buy',
+
+    // })
 }
 
 function vitaminsSearch() {
-      console.log('hello')
+  var vitaminsArr = []
+  var vitaminsQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(vitaminsQuery, { department_name: 'Vitamins' }, function (error, response) {
+    for (var i = 0; i < response.length; i++) {
+      vitaminsArr.push(response[i].product_name)
     }
+
+    inquirer.prompt({
+        name: 'department_name',
+        type: 'list',
+        message: 'What vitamin product would you like to buy?',
+        choices: vitaminsArr
+        })
+      })
+}
+
 
 function electronicsSearch() {
-      console.log('hello')
+  var electronicsArr = []
+  var electronicsQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(electronicsQuery, { department_name: 'Electronics' }, function (error, response) {
+    for (var i = 0; i < response.length; i++) {
+      electronicsArr.push(response[i].product_name)
     }
+
+    inquirer.prompt({
+        name: 'department_name',
+        type: 'list',
+        message: 'What electronics product would you like to buy?',
+        choices: electronicsArr
+        })
+      })
+}
 
 function appliancesSearch() {
-      console.log('hello')
+  var appliancesArr = []
+  var appliancesQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(appliancesQuery, { department_name: 'Appliances' }, function (error, response) {
+    for (var i = 0; i < response.length; i++) {
+      appliancesArr.push(response[i].product_name)
     }
 
-  // inquirer
-  //   .prompt({
-  //     name: "cleaningProducts",
-  //     type: "input",
-  //     message: "What cleaning product would you like to purchase?"
-  //   })
-  //   .then(function(answer) {
-  //     var query = "SELECT product_name FROM products";
-  //     connection.query(query, { products: products.product_name }, function(err, res) {
-  //       for (var i = 0; i < res.length; i++) {
-  //         console.log("Position: " + res[i].product_name);
-  //       }
-  //       cleaningProductsSearch();
-  //     });
-  //   });
+    inquirer.prompt({
+        name: 'department_name',
+        type: 'list',
+        message: 'What electronics product would you like to buy?',
+        choices: appliancesArr
+        })
+      })
+}
 
-
-
-
-
-
-//   inquirer.prompt({
-//     name: "Department",
-//     type: "list",
-//     message: "What department would you like to shop?",
-//     choices: ["Cleaning Products", "Vitamins", "Electronics", "Appliances"]
-//   })
-
-
-
-//   connection.end()
-// });
+runSearch();
