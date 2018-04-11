@@ -75,7 +75,7 @@ function cleaningProductsSearch() {
             message: answerCleaningArr.toString(),
             default: "1-100",
             validate: function (value) {
-              if (isNaN(value) === false && value > 0 && value < 100) {
+              if (isNaN(value) === false && value > 0 && value < 101) {
                 return true;
               }
               return false;
@@ -83,9 +83,21 @@ function cleaningProductsSearch() {
           })
 
             .then(function (answer) {
-              var cleaningQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.quantity + ' WHERE ?';
-              connection.query(cleaningQuantityQuery, { product_name: cleaningProductsAnswer }, function (err, res) {
-                console.log("Thank you for you purchase!")
+              var cleaningQuantityCheck = answer.quantity
+              var currentCleaningQuantityQuery = 'SELECT stock_quantity FROM products WHERE ?';
+              var currentCleaningQuantityArray = []
+              connection.query(currentCleaningQuantityQuery, { product_name: cleaningProductsAnswer }, function (erro, resp) {
+                // currentCleaningQuantityArray.push(resp)
+                if(resp[0].stock_quantity < cleaningQuantityCheck){
+                  console.log('Insufficient quantity!')
+                  connection.end()
+                }else{
+                  var cleaningQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.quantity + ' WHERE ?';
+                  connection.query(cleaningQuantityQuery, { product_name: cleaningProductsAnswer }, function (err, res) {
+                    console.log("Thank you for you purchase!")
+                    connection.end()
+                  })
+                }
               })
             })
         })
@@ -116,12 +128,12 @@ function vitaminsSearch() {
           answerVitaminArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
 
           inquirer.prompt({
-            name: "vitaminQuantity",
+            name: "quantity",
             type: "input",
             message: answerVitaminArr.toString(),
             default: "1-100",
             validate: function (value) {
-              if (isNaN(value) === false && value > 0 && value < 100) {
+              if (isNaN(value) === false && value > 0 && value < 101) {
                 return true;
               }
               return false;
@@ -129,9 +141,21 @@ function vitaminsSearch() {
           })
 
             .then(function (answer) {
-              var vitaminQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.vitaminQuantity + ' WHERE ?';
-              connection.query(vitaminQuantityQuery, { product_name: vitaminProductsAnswer }, function (err, res) {
-                console.log("Thank you for you purchase!")
+              var vitaminQuantityCheck = answer.quantity
+              var currentVitaminQuantityQuery = 'SELECT stock_quantity FROM products WHERE ?';
+              var currentVitaminQuantityArray = []
+              connection.query(currentVitaminQuantityQuery, { product_name: vitaminProductsAnswer }, function (erro, resp) {
+                // currentCleaningQuantityArray.push(resp)
+                if(resp[0].stock_quantity < vitaminQuantityCheck){
+                  console.log('Insufficient quantity!')
+                  connection.end()
+                }else{
+                  var vitaminQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.quantity + ' WHERE ?';
+                  connection.query(vitaminQuantityQuery, { product_name: vitaminProductsAnswer }, function (err, res) {
+                    console.log("Thank you for you purchase!")
+                    connection.end()
+                  })
+                }
               })
             })
         })
@@ -141,34 +165,34 @@ function vitaminsSearch() {
 
 
 function electronicsSearch() {
-  var electronicsArr = []
-  var electronicsQuery = 'SELECT * FROM products WHERE ?';
-  connection.query(electronicsQuery, { department_name: 'Electronics' }, function (error, response) {
+  var electronicArr = []
+  var electronicQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(electronicQuery, { department_name: 'Electronics' }, function (error, response) {
     for (var i = 0; i < response.length; i++) {
-      electronicsArr.push(response[i].product_name)
+      electronicArr.push(response[i].product_name)
     }
 
     inquirer.prompt({
       name: 'electronic_products',
       type: 'list',
       message: 'What electronic product would you like to buy?',
-      choices: electronicsArr
+      choices: electronicArr
     })
 
       .then(function (answer) {
-        var electronicsProductsAnswer = answer.electronic_products
-        var answerElectronicsArr = []
-        var answerElectronicsQuery = 'SELECT * FROM products WHERE ?';
-        connection.query(answerElectronicsQuery, { product_name: answer.electronic_products }, function (err, res) {
-          answerElectronicsArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
+        var electronicProductsAnswer = answer.electronic_products
+        var answerElectronicArr = []
+        var answerElectronicQuery = 'SELECT * FROM products WHERE ?';
+        connection.query(answerElectronicQuery, { product_name: answer.electronic_products }, function (err, res) {
+          answerElectronicArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
 
           inquirer.prompt({
-            name: "electronicsQuantity",
+            name: "quantity",
             type: "input",
-            message: answerElectronicsArr.toString(),
+            message: answerElectronicArr.toString(),
             default: "1-100",
             validate: function (value) {
-              if (isNaN(value) === false && value > 0 && value < 100) {
+              if (isNaN(value) === false && value > 0 && value < 101) {
                 return true;
               }
               return false;
@@ -176,9 +200,21 @@ function electronicsSearch() {
           })
 
             .then(function (answer) {
-              var electronicsQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.electronicsQuantity + ' WHERE ?';
-              connection.query(electronicsQuantityQuery, { product_name: electronicsProductsAnswer }, function (err, res) {
-                console.log("Thank you for you purchase!")
+              var electronicQuantityCheck = answer.quantity
+              var currentElectronicQuantityQuery = 'SELECT stock_quantity FROM products WHERE ?';
+              var currentElectronicQuantityArray = []
+              connection.query(currentElectronicQuantityQuery, { product_name: electronicProductsAnswer }, function (erro, resp) {
+                // currentCleaningQuantityArray.push(resp)
+                if(resp[0].stock_quantity < electronicQuantityCheck){
+                  console.log('Insufficient quantity!')
+                  connection.end()
+                }else{
+                  var electronicQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.quantity + ' WHERE ?';
+                  connection.query(electronicQuantityQuery, { product_name: electronicProductsAnswer }, function (err, res) {
+                    console.log("Thank you for you purchase!")
+                    connection.end()
+                  })
+                }
               })
             })
         })
@@ -187,34 +223,34 @@ function electronicsSearch() {
 }
 
 function appliancesSearch() {
-  var appliancesArr = []
-  var appliancesQuery = 'SELECT * FROM products WHERE ?';
-  connection.query(appliancesQuery, { department_name: 'Appliances' }, function (error, response) {
+  var applianceArr = []
+  var applianceQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(applianceQuery, { department_name: 'Appliances' }, function (error, response) {
     for (var i = 0; i < response.length; i++) {
-      appliancesArr.push(response[i].product_name)
+      applianceArr.push(response[i].product_name)
     }
 
     inquirer.prompt({
       name: 'appliance_products',
       type: 'list',
       message: 'What appliance product would you like to buy?',
-      choices: appliancesArr
+      choices: applianceArr
     })
 
       .then(function (answer) {
-        var appliancesProductsAnswer = answer.appliance_products
-        var answerAppliancesArr = []
-        var answerAppliancesQuery = 'SELECT * FROM products WHERE ?';
-        connection.query(answerAppliancesQuery, { product_name: answer.appliance_products }, function (err, res) {
-          answerAppliancesArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
+        var applianceProductsAnswer = answer.appliance_products
+        var answerApplianceArr = []
+        var answerApplianceQuery = 'SELECT * FROM products WHERE ?';
+        connection.query(answerApplianceQuery, { product_name: answer.appliance_products }, function (err, res) {
+          answerApplianceArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
 
           inquirer.prompt({
-            name: "applianceQuantity",
+            name: "quantity",
             type: "input",
-            message: answerAppliancesArr.toString(),
+            message: answerApplianceArr.toString(),
             default: "1-100",
             validate: function (value) {
-              if (isNaN(value) === false && value > 0 && value < 100) {
+              if (isNaN(value) === false && value > 0 && value < 101) {
                 return true;
               }
               return false;
@@ -222,9 +258,21 @@ function appliancesSearch() {
           })
 
             .then(function (answer) {
-              var appliancesQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.applianceQuantity + ' WHERE ?';
-              connection.query(appliancesQuantityQuery, { product_name: appliancesProductsAnswer }, function (err, res) {
-                console.log("Thank you for you purchase!")
+              var applianceQuantityCheck = answer.quantity
+              var currentApplianceQuantityQuery = 'SELECT stock_quantity FROM products WHERE ?';
+              var currentApplianceQuantityArray = []
+              connection.query(currentApplianceQuantityQuery, { product_name: applianceProductsAnswer }, function (erro, resp) {
+                // currentCleaningQuantityArray.push(resp)
+                if(resp[0].stock_quantity < applianceQuantityCheck){
+                  console.log('Insufficient quantity!')
+                  connection.end()
+                }else{
+                  var applianceQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.quantity + ' WHERE ?';
+                  connection.query(applianceQuantityQuery, { product_name: applianceProductsAnswer }, function (err, res) {
+                    console.log("Thank you for you purchase!")
+                    connection.end()
+                  })
+                }
               })
             })
         })
