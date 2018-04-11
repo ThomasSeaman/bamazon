@@ -52,7 +52,7 @@ function cleaningProductsSearch() {
   var cleaningQuery = 'SELECT * FROM products WHERE ?';
   connection.query(cleaningQuery, { department_name: 'Cleaning Products' }, function (error, response) {
     for (var i = 0; i < response.length; i++) {
-      cleanArr.push(response[i].product_name)
+      cleanArr.push('Name: ' + response[i].product_name + ' Price: $' + response[i].price)
     }
     
     inquirer.prompt({
@@ -60,14 +60,25 @@ function cleaningProductsSearch() {
         type: 'list',
         message: 'What cleaning product would you like to buy?',
         choices: cleanArr
-        })
       })
+    
+    .then(function(answer){
+      console.log(answer)
+    }) 
 
-    // inquirer.prompt({
-    //   name: 'buy',
+    })
+  }
+// go through and display pricing to those options
+// give the user a confirmation of the product they chose
+// check store for quantity, if no then tell them
+// if yes, remove count of product from SQL database using ALTER
+// show purchase total to customer
+  
 
-    // })
-}
+// function(){
+  // cleanArr.forEach(function(item){
+    // return item.product_name + item.price
+
 
 function vitaminsSearch() {
   var vitaminsArr = []
