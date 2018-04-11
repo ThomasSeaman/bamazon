@@ -26,75 +26,117 @@ function runSearch() {
       'Appliances'
     ]
   })
-  .then(function (answer) {
-    switch (answer.department_name) {
-      case 'Cleaning Products':
-      cleaningProductsSearch();
-      break;
-      
-      case 'Vitamins':
-      vitaminsSearch();
-      break;
-      
-      case 'Electronics':
-      electronicsSearch();
-      break;
-      
-      case 'Appliances':
-      appliancesSearch();
-      break;
-    }
-  });
-  
+    .then(function (answer) {
+      switch (answer.department_name) {
+        case 'Cleaning Products':
+          cleaningProductsSearch();
+          break;
+
+        case 'Vitamins':
+          vitaminsSearch();
+          break;
+
+        case 'Electronics':
+          electronicsSearch();
+          break;
+
+        case 'Appliances':
+          appliancesSearch();
+          break;
+      }
+    });
 }
+
 function cleaningProductsSearch() {
   var cleanArr = []
   var cleaningQuery = 'SELECT * FROM products WHERE ?';
   connection.query(cleaningQuery, { department_name: 'Cleaning Products' }, function (error, response) {
     for (var i = 0; i < response.length; i++) {
-      cleanArr.push('Name: ' + response[i].product_name + ' Price: $' + response[i].price)
+      cleanArr.push(response[i].product_name)
     }
-    
-    inquirer.prompt({
-        name: 'department_name',
-        type: 'list',
-        message: 'What cleaning product would you like to buy?',
-        choices: cleanArr
-      })
-    
-    .then(function(answer){
-      console.log(answer)
-    }) 
 
+    inquirer.prompt({
+      name: 'cleaning_products',
+      type: 'list',
+      message: 'What cleaning product would you like to buy?',
+      choices: cleanArr
     })
-  }
-// go through and display pricing to those options
-// give the user a confirmation of the product they chose
-// check store for quantity, if no then tell them
-// if yes, remove count of product from SQL database using ALTER
-// show purchase total to customer
-  
 
-// function(){
-  // cleanArr.forEach(function(item){
-    // return item.product_name + item.price
+      .then(function (answer) {
+        var cleaningProductsAnswer = answer.cleaning_products
+        var answerCleaningArr = []
+        var answerCleaningQuery = 'SELECT * FROM products WHERE ?';
+        connection.query(answerCleaningQuery, { product_name: answer.cleaning_products }, function (err, res) {
+          answerCleaningArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
 
+          inquirer.prompt({
+            name: "quantity",
+            type: "input",
+            message: answerCleaningArr.toString(),
+            default: "1-100",
+            validate: function (value) {
+              if (isNaN(value) === false && value > 0 && value < 100) {
+                return true;
+              }
+              return false;
+            }
+          })
 
-function vitaminsSearch() {
-  var vitaminsArr = []
-  var vitaminsQuery = 'SELECT * FROM products WHERE ?';
-  connection.query(vitaminsQuery, { department_name: 'Vitamins' }, function (error, response) {
-    for (var i = 0; i < response.length; i++) {
-      vitaminsArr.push(response[i].product_name)
-    }
-
-    inquirer.prompt({
-        name: 'department_name',
-        type: 'list',
-        message: 'What vitamin product would you like to buy?',
-        choices: vitaminsArr
+            .then(function (answer) {
+              var cleaningQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.quantity + ' WHERE ?';
+              connection.query(cleaningQuantityQuery, { product_name: cleaningProductsAnswer }, function (err, res) {
+                console.log("Thank you for you purchase!")
+              })
+            })
         })
       })
+  })
+}
+
+function vitaminsSearch() {
+  var vitaminArr = []
+  var vitaminQuery = 'SELECT * FROM products WHERE ?';
+  connection.query(vitaminQuery, { department_name: 'Vitamins' }, function (error, response) {
+    for (var i = 0; i < response.length; i++) {
+      vitaminArr.push(response[i].product_name)
+    }
+
+    inquirer.prompt({
+      name: 'vitamin_products',
+      type: 'list',
+      message: 'What vitamin product would you like to buy?',
+      choices: vitaminArr
+    })
+
+      .then(function (answer) {
+        var vitaminProductsAnswer = answer.vitamin_products
+        var answerVitaminArr = []
+        var answerVitaminQuery = 'SELECT * FROM products WHERE ?';
+        connection.query(answerVitaminQuery, { product_name: answer.vitamin_products }, function (err, res) {
+          answerVitaminArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
+
+          inquirer.prompt({
+            name: "vitaminQuantity",
+            type: "input",
+            message: answerVitaminArr.toString(),
+            default: "1-100",
+            validate: function (value) {
+              if (isNaN(value) === false && value > 0 && value < 100) {
+                return true;
+              }
+              return false;
+            }
+          })
+
+            .then(function (answer) {
+              var vitaminQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.vitaminQuantity + ' WHERE ?';
+              connection.query(vitaminQuantityQuery, { product_name: vitaminProductsAnswer }, function (err, res) {
+                console.log("Thank you for you purchase!")
+              })
+            })
+        })
+      })
+  })
 }
 
 
@@ -107,12 +149,41 @@ function electronicsSearch() {
     }
 
     inquirer.prompt({
-        name: 'department_name',
-        type: 'list',
-        message: 'What electronics product would you like to buy?',
-        choices: electronicsArr
+      name: 'electronic_products',
+      type: 'list',
+      message: 'What electronic product would you like to buy?',
+      choices: electronicsArr
+    })
+
+      .then(function (answer) {
+        var electronicsProductsAnswer = answer.electronic_products
+        var answerElectronicsArr = []
+        var answerElectronicsQuery = 'SELECT * FROM products WHERE ?';
+        connection.query(answerElectronicsQuery, { product_name: answer.electronic_products }, function (err, res) {
+          answerElectronicsArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
+
+          inquirer.prompt({
+            name: "electronicsQuantity",
+            type: "input",
+            message: answerElectronicsArr.toString(),
+            default: "1-100",
+            validate: function (value) {
+              if (isNaN(value) === false && value > 0 && value < 100) {
+                return true;
+              }
+              return false;
+            }
+          })
+
+            .then(function (answer) {
+              var electronicsQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.electronicsQuantity + ' WHERE ?';
+              connection.query(electronicsQuantityQuery, { product_name: electronicsProductsAnswer }, function (err, res) {
+                console.log("Thank you for you purchase!")
+              })
+            })
         })
       })
+  })
 }
 
 function appliancesSearch() {
@@ -124,12 +195,41 @@ function appliancesSearch() {
     }
 
     inquirer.prompt({
-        name: 'department_name',
-        type: 'list',
-        message: 'What electronics product would you like to buy?',
-        choices: appliancesArr
+      name: 'appliance_products',
+      type: 'list',
+      message: 'What appliance product would you like to buy?',
+      choices: appliancesArr
+    })
+
+      .then(function (answer) {
+        var appliancesProductsAnswer = answer.appliance_products
+        var answerAppliancesArr = []
+        var answerAppliancesQuery = 'SELECT * FROM products WHERE ?';
+        connection.query(answerAppliancesQuery, { product_name: answer.appliance_products }, function (err, res) {
+          answerAppliancesArr.push('Price: $' + res[0].price + ' - How many would you like to buy?')
+
+          inquirer.prompt({
+            name: "applianceQuantity",
+            type: "input",
+            message: answerAppliancesArr.toString(),
+            default: "1-100",
+            validate: function (value) {
+              if (isNaN(value) === false && value > 0 && value < 100) {
+                return true;
+              }
+              return false;
+            }
+          })
+
+            .then(function (answer) {
+              var appliancesQuantityQuery = 'UPDATE products SET stock_quantity = stock_quantity - ' + answer.applianceQuantity + ' WHERE ?';
+              connection.query(appliancesQuantityQuery, { product_name: appliancesProductsAnswer }, function (err, res) {
+                console.log("Thank you for you purchase!")
+              })
+            })
         })
       })
+  })
 }
 
 runSearch();
