@@ -1,7 +1,6 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
 
-// mySQL connection
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -87,7 +86,6 @@ function cleaningProductsSearch() {
               var currentCleaningQuantityQuery = 'SELECT stock_quantity FROM products WHERE ?';
               var currentCleaningQuantityArray = []
               connection.query(currentCleaningQuantityQuery, { product_name: cleaningProductsAnswer }, function (erro, resp) {
-                // currentCleaningQuantityArray.push(resp)
                 if(resp[0].stock_quantity < cleaningQuantityCheck){
                   console.log('Insufficient quantity!')
                   connection.end()
